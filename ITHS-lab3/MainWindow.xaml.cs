@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.VisualBasic;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,99 +22,78 @@ namespace ITHS_lab3
     /// </summary>
     public partial class MainWindow : Window
     {
-        private string selectedDateStrFormat;
-        private string selectedTable;
-        private string selectedTime;
-        private string selectedName;
-
-        bool isDateSelected = false;
-        bool isTableSelected = false;
-        bool isTimeSelected = false;
-        bool isShowingBookings = false;
+        private bool showBookings = false;
+        BookingSystem bookingSystem;
 
         public MainWindow()
         {
             InitializeComponent();
+            DataContext = new ViewModel();
+            bookingSystem = new BookingSystem();
+            FileHandler.CreateFile();
         }
 
 
         // DATE SELECTION
         private void dp_SelectDate_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            selectedDateStrFormat = $"{dp_SelectDate.SelectedDate.Value.Year.ToString()}-{dp_SelectDate.SelectedDate.Value.Month.ToString()}-{dp_SelectDate.SelectedDate.Value.Day.ToString()}";
-            isDateSelected = true;
+            UIStuff.isDateSelected = true;
         }
 
         // TABLE SELECTION
         private void cbox_SelectTables_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            selectedTable = cbox_SelectTable.SelectedValue.ToString();
-            isTableSelected = true;
+            UIStuff.isTableSelected = true;
         }
 
 
         // TIME SELECTION
         private void cbox_SelectTime_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            selectedTime = cbox_SelectTime.SelectedValue.ToString();
-            isTimeSelected = true;
+            UIStuff.isTimeSelected = true;
         }
 
 
-        // OK BUTTON CLICKED
+        // Book - BUTTON CLICKED
         private void btn_ok_Click(object sender, RoutedEventArgs e)
         {
-            if (!isDateSelected) MessageBox.Show("Please select a date");
-            else if (!isTimeSelected) MessageBox.Show("Please select a time");
-            else if (!isTableSelected) MessageBox.Show("Please select a table");
-            else if (txb_name.Text == "Booker's name" || txb_name.Text == null) MessageBox.Show("Please enter a name");
-
-            if (isDateSelected && isTimeSelected && isTableSelected)
+            // Check that everything is entered
+            if (UIStuff.CheckIsAllEntered(txb_Name.Text))
             {
-                if (BookingIsConfirmed())
-                    BookingSystem.MakeBooking(selectedDateStrFormat, selectedTime, selectedTable, txb_name.Text);
-            }
+                // Pass entered info directly
+                bookingSystem.Book(new Booking(dp_SelectDate, cbox_SelectTime.Text, cbox_SelectTable.Text, txb_Name.Text));
+            }           
+            UpdateShowBookingsContent();
         }
 
-
-        // Confirm booking
-        private bool BookingIsConfirmed()
-        {
-            MessageBoxResult mbResult = MessageBox.Show($"Please confirm booking:\n\nDate: {selectedDateStrFormat}\nTime: {selectedTime}\nTable: {selectedTable}\nName: {txb_name.Text}", $"Confirm booking", MessageBoxButton.OKCancel);
-            if (MessageBoxResult.OK == mbResult)
-            {
-                MessageBox.Show("Booking confirmed.");
-                return true;
-            }
-            return false;
-        }
 
         private void btn_ShowBookings_Click(object sender, RoutedEventArgs e)
         {
-            if (!isShowingBookings)
+            ToggleShowBookings();
+        }
+
+        public void ToggleShowBookings()
+        {
+            if (!showBookings)
             {
-                txb_OutputHeader.Text = "Bookings:";
-                txb_BookingsOutput.Text = BookingSystem.AllBookingsToString();
-                isShowingBookings = true;
+                tbl_OutputHeader.Text = "Bookings:";
                 btn_ShowBookings.Content = "Hide bookings";
+                showBookings = true;
+                UpdateShowBookingsContent();
             }
             else
             {
-                txb_OutputHeader.Text = "";
-                txb_BookingsOutput.Text = "";
-                isShowingBookings = false;
+                tbl_OutputHeader.Text = "";
                 btn_ShowBookings.Content = "Show bookings";
+                tbo_BookingsOutput.Text = "";
+                showBookings = false;
             }
-
-            
         }
 
-
-        // DISPLAY SELECTION
-        private void DisplaySelections()
+        private void UpdateShowBookingsContent()
         {
-            if (isDateSelected == true && isTableSelected == true && isTimeSelected == true)
-                txb_BookingsOutput.Text = $"Date: {selectedDateStrFormat}\nTime: {selectedTime}\nTable: {selectedTable}";
+            if (showBookings)
+                tbo_BookingsOutput.Text = BookingSystem.AllBookingsToString();
         }
     }
 }

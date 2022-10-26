@@ -7,7 +7,7 @@
         xmlns:local="clr-namespace:ITHS_lab3"
         xmlns:sys="clr-namespace:System;assembly=mscorlib">
     <Window.Resources>
-        <x:Array x:Key="selectableTimes" Type="sys:String">
+        <x:Array x:Key="hej" Type="sys:String">
             <sys:String>15:00</sys:String>
             <sys:String>16:00</sys:String>
             <sys:String>17:00</sys:String>           
@@ -17,7 +17,7 @@
             <sys:String>21:00</sys:String>
             <sys:String>22:00</sys:String>
         </x:Array>
-        <x:Array x:Key="selectableTables" Type="sys:String">
+        <x:Array x:Key="hejhej" Type="sys:String">
             <sys:String>1</sys:String>
             <sys:String>2</sys:String>
             <sys:String>3</sys:String>
@@ -50,12 +50,12 @@
 
         <DatePicker x:Name="dp_SelectDate" Grid.Column="1" Grid.Row="1" Width="120" SelectedDateChanged="dp_SelectDate_SelectionChanged" />
         <ComboBox x:Name="cbox_SelectTime" Grid.Column="2" Grid.Row="1" Width="120" IsReadOnly="True"
-                  ItemsSource="{StaticResource selectableTimes}" IsEditable="true" Text="Select a time" SelectionChanged="cbox_SelectTime_SelectionChanged" />
+                  ItemsSource="{Binding comboBoxTimes}" IsEditable="true" Text="Select a time" SelectionChanged="cbox_SelectTime_SelectionChanged" />
         <ComboBox x:Name="cbox_SelectTable" Grid.Column="3" Grid.Row="1" Width="120" IsEditable="True" IsReadOnly="True"
-                  Text="Select a table" ItemsSource="{StaticResource selectableTables}" SelectionChanged="cbox_SelectTables_SelectionChanged" />
-        <TextBox x:Name="txb_name" Grid.Column="4" Grid.Row="1" Text="Booker's name" Width="150" />
-        <TextBlock x:Name="txb_OutputHeader" Grid.Column="1" Grid.Row="2" Margin=" 0,10" FontWeight="Bold"/>
-        <TextBlock x:Name="txb_BookingsOutput" Grid.Column="1" Grid.Row="3" FontSize="15" Grid.RowSpan="2" Grid.ColumnSpan="3" Focusable="True"/>
+                  Text="Select a table" ItemsSource="{Binding comboBoxTables}" SelectionChanged="cbox_SelectTables_SelectionChanged" />
+        <TextBox x:Name="txb_Name" Grid.Column="4" Grid.Row="1" Text="Booker's name" Width="150" />
+        <TextBlock x:Name="tbl_OutputHeader" Grid.Column="1" Grid.Row="2" Margin=" 0,10" FontWeight="Bold"/>
+        <TextBlock x:Name="tbo_BookingsOutput" Grid.Column="1" Grid.Row="3" FontSize="15" Grid.RowSpan="2" Grid.ColumnSpan="3" Focusable="True"/>
         <Button x:Name="btn_ok" Grid.Column="5" Grid.Row="1" Content="Book" Width="100" Height="25" Click="btn_ok_Click"/>
         <Button x:Name="btn_ShowBookings" Grid.Column="5" Grid.Row="2" Content="Show Bookings" Height="25" Margin="0,5" Click="btn_ShowBookings_Click"/>
     </Grid>

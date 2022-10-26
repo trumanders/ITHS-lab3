@@ -1,19 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Windows.Controls;
 
 namespace ITHS_lab3
 {
-    class Booking
+    public class Booking
     {
-        public string DateStrFormat { get; set; }
-        public string Time { get; set; }
-        public string Table { get; set; }
-        public string Name { get; set; }
+        public DateTime Date{ get; private set; }
+        public string Time { get; private set; }
+        public string Table { get; private set; }
+        public string Name { get; private set; }
 
-        public Booking(string dateStrFormat, string time, string table, string name)
+        public Booking(DatePicker date, string time, string table, string name)
         {
-            DateStrFormat = dateStrFormat;
+            // Convert datepicker object to DateTime here
+            this.Date = new DateTime(date.SelectedDate.Value.Year, date.SelectedDate.Value.Month, date.SelectedDate.Value.Day);
             Time = time;
             Table = table;
             Name = name;
@@ -23,22 +25,11 @@ namespace ITHS_lab3
         // Get booking string (YYYY-MM-DD: Name, table num - Time)
         public string BookingToString()
         {
-            return $"{DateStrFormat}: {Name}, table {Table} - {Time}\n";
-        }
-
-        public void ShowBookingConfirmation()
-        {
-
-        }
-
-
-        public void ConfirmBooking()
-        {
-
-        }
+            // Convert DateTime to string date here
 
 
 
- 
+            return $"{Date.ToString()}: {Name}, table {Table} - {Time}\n";
+        } 
     }
 }
