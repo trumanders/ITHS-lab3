@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using System.Windows;
-using System.Collections.Generic;
 using System.Windows.Controls;
 
 namespace ITHS_lab3
@@ -35,12 +34,12 @@ namespace ITHS_lab3
         }
 
 
-        // Retrun a string containging all bookings
-        public static string AllBookingsToString()
+        // Retrun a string array containing all bookings
+        public static string[] AllBookingsToStringArr()
         {
-            string allBookingString = "";
-            allBookings.Select(booking => booking).ToList().ForEach(booking => allBookingString += booking.BookingToString());    
-            return allBookingString;
+            // Call booking to string on each booking and put it in a string array
+            var allBookingsStringArr = allBookings.Select(booking => booking.BookingToString()).ToArray();    
+            return allBookingsStringArr;
         }
 
 

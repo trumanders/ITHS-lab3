@@ -7,6 +7,9 @@
         xmlns:local="clr-namespace:ITHS_lab3"
         xmlns:sys="clr-namespace:System;assembly=mscorlib">
     <Window.Resources>
+        <Style TargetType="DatePicker">
+            <Setter Property="FontSize" Value="16" />
+        </Style>
         <x:Array x:Key="hej" Type="sys:String">
             <sys:String>15:00</sys:String>
             <sys:String>16:00</sys:String>
@@ -54,9 +57,12 @@
         <ComboBox x:Name="cbox_SelectTable" Grid.Column="3" Grid.Row="1" Width="120" IsEditable="True" IsReadOnly="True"
                   Text="Select a table" ItemsSource="{Binding comboBoxTables}" SelectionChanged="cbox_SelectTables_SelectionChanged" />
         <TextBox x:Name="txb_Name" Grid.Column="4" Grid.Row="1" Text="Booker's name" Width="150" />
-        <TextBlock x:Name="tbl_OutputHeader" Grid.Column="1" Grid.Row="2" Margin=" 0,10" FontWeight="Bold"/>
-        <TextBlock x:Name="tbo_BookingsOutput" Grid.Column="1" Grid.Row="3" FontSize="15" Grid.RowSpan="2" Grid.ColumnSpan="3" Focusable="True"/>
+        <TextBlock x:Name="tbl_OutputHeader" Grid.Column="1" Grid.Row="2" Margin=" 0,10" FontWeight="Bold" />
+
+
         <Button x:Name="btn_ok" Grid.Column="5" Grid.Row="1" Content="Book" Width="100" Height="25" Click="btn_ok_Click"/>
-        <Button x:Name="btn_ShowBookings" Grid.Column="5" Grid.Row="2" Content="Show Bookings" Height="25" Margin="0,5" Click="btn_ShowBookings_Click"/>
+        <Button x:Name="btn_ShowBookings" Grid.Column="5" Grid.Row="2" Content="Show Bookings" Height="25" Margin="0,5" Click="btn_ShowBookings_Click" />
+        <ListBox x:Name="lbx_BookingsOutput" Grid.Column="1" Grid.Row="3" FontSize="15" Grid.RowSpan="2" Grid.ColumnSpan="3"
+                 Focusable="True" SelectionMode="Extended"/>
     </Grid>
 </Window>

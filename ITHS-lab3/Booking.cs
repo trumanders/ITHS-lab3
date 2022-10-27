@@ -22,14 +22,10 @@ namespace ITHS_lab3
         }
 
 
-        // Get booking string (YYYY-MM-DD: Name, table num - Time)
+        // Get booking string
         public string BookingToString()
         {
-            // Convert DateTime to string date here
-
-
-
-            return $"{Date.ToString()}: {Name}, table {Table} - {Time}\n";
+            return $"{Date.ToString()}: {Name}, table {Table} - {Time}";
         } 
     }
 }

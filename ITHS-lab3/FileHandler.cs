@@ -28,7 +28,7 @@ namespace ITHS_lab3
 
         public static void UpdateBookingFile()
         {
-            File.WriteAllText(FILENAME, BookingSystem.AllBookingsToString());
+            File.WriteAllLines(FILENAME, BookingSystem.AllBookingsToStringArr());
         }
     }
 }

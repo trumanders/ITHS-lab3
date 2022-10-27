@@ -85,7 +85,7 @@ namespace ITHS_lab3
             {
                 tbl_OutputHeader.Text = "";
                 btn_ShowBookings.Content = "Show bookings";
-                tbo_BookingsOutput.Text = "";
+                lbx_BookingsOutput.ItemsSource = "";
                 showBookings = false;
             }
         }
@@ -93,7 +93,8 @@ namespace ITHS_lab3
         private void UpdateShowBookingsContent()
         {
             if (showBookings)
-                tbo_BookingsOutput.Text = BookingSystem.AllBookingsToString();
+
+                lbx_BookingsOutput.ItemsSource = BookingSystem.AllBookingsToStringArr();
         }
     }
 }
