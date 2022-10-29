@@ -37,8 +37,5 @@ namespace ITHS_lab3
             }
             return true;
         }
-
-
-
     }
 }

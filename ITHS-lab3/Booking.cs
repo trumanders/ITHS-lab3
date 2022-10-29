@@ -12,20 +12,20 @@ namespace ITHS_lab3
         public string Table { get; private set; }
         public string Name { get; private set; }
 
-        public Booking(DatePicker date, string time, string table, string name)
+        public Booking(DateTime date, string time, string table, string name)
         {
             // Convert datepicker object to DateTime here
-            this.Date = new DateTime(date.SelectedDate.Value.Year, date.SelectedDate.Value.Month, date.SelectedDate.Value.Day);
+            this.Date = date;
             Time = time;
             Table = table;
-            Name = name;
+            Name = name;           
         }
 
 
         // Get booking string
         public string BookingToString()
         {
-            return $"{Date.ToString()}: {Name}, table {Table} - {Time}";
+            return $"{Date.ToString("yyy/MM/dd")}: {Name}, table {Table} - {Time}";
         } 
     }
 }
