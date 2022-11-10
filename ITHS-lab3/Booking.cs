@@ -14,11 +14,10 @@ namespace ITHS_lab3
 
         public Booking(DateTime date, string time, string table, string name)
         {
-            // Convert datepicker object to DateTime here
             this.Date = date;
             Time = time;
             Table = table;
-            Name = name;           
+            Name = name;
         }
 
 

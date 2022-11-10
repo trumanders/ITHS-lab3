@@ -6,6 +6,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.IO;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace ITHS_lab3
 {
@@ -17,41 +19,61 @@ namespace ITHS_lab3
         // List of all bookings
         public List<Booking> AllBookings { get; set; }
         public List<string> AllBookingsStringList { get; set; }
-        public List<string> comboBoxTables { get; private set; }
-        public List<string> comboBoxTimes { get; private set; }      
+        ViewModel viewModel;
+        public List<string> bookingsFromFile { get; private set; }
+
+        public int TotNumBookings
+        {
+            get { return AllBookings.Count; }
+            private set { }
+        }
 
         public BookingSystem()
         {
+            viewModel = new ViewModel();
             AllBookings = new List<Booking>();
             AllBookingsStringList = new List<string>();
             if (!File.Exists(FILENAME))
                 File.AppendAllText(FILENAME, "");
-            comboBoxTables = new List<string>() { "1", "2", "3", "4", "5" };
-            comboBoxTimes = new List<string> { "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00" };
         }
 
 
         // Auto-generate bookings
-        public void GenerateBookings(int numberOfBookingsToGenereate)
+        public void GenerateBookings(int numOfBookingsToGenerate)
         {
-            Random rnd = new Random();            
-            for (int i = 0; i < numberOfBookingsToGenereate; i++)
+            Random rnd = new Random();
+
+            Application.Current.Dispatcher.Invoke((Action)delegate
             {
-                // Generate random month and day
+                MainWindow window = (MainWindow)Application.Current.MainWindow;
+                window.setInfo("Generating...");
+            });
+
+            for (int i = 0; i < numOfBookingsToGenerate; i++)
+            {
+                // Set random month and day
                 int randomMonth = rnd.Next(11) + 1;
                 int randomDay = rnd.Next(27) + 1;
 
-                // Generate random indexes for the time- and table selections arrays
-                string randomTime = comboBoxTimes[rnd.Next(comboBoxTimes.Count)];
-                string randomTable = comboBoxTables[rnd.Next(comboBoxTables.Count)];
-                AllBookings.Add(new Booking(new DateTime(2023, randomMonth, randomDay), randomTime, randomTable, "")); 
+                // Generate random indexes in the time- and table arrays
+                string randomTime = viewModel.comboBoxTimes[rnd.Next(viewModel.comboBoxTimes.Count)];
+                string randomTable = viewModel.comboBoxTables[rnd.Next(viewModel.comboBoxTables.Count)];
+
+                // Add booking object directly (no valid checking)
+                AllBookings.Add(new Booking(new DateTime(2023, randomMonth, randomDay), randomTime, randomTable, ""));
             }
-            
+
+            Application.Current.Dispatcher.Invoke((Action)delegate
+            {
+                MainWindow window = (MainWindow)Application.Current.MainWindow;
+                window.setInfo($"{numOfBookingsToGenerate} bookings gererated!");
+            });
             UpdateBookingsStringList();
         }
 
 
-        // Calls method to make the booking if it is valid
+
+        // Perform booking if it is valid
         public void Book(Booking tempBooking)
         {
             if (IsValidBooking(tempBooking))
@@ -60,14 +82,14 @@ namespace ITHS_lab3
                     MakeBooking(tempBooking);
             }
             else MessageBox.Show("Already booked! Please try another table, time or day.");
+            UpdateBookingsStringList();
         }
 
 
         // Creates a booking object in the AllBookings List
-        public void MakeBooking(Booking newBooking)
+        private void MakeBooking(Booking newBooking)
         {
             AllBookings.Add(newBooking);
-            UpdateBookingsStringList();
         }
 
 
@@ -83,7 +105,7 @@ namespace ITHS_lab3
 
 
         // Confirm booking        
-        public bool BookingIsConfirmed(Booking b)
+        private bool BookingIsConfirmed(Booking b)
         {
             MessageBoxResult mbResult = MessageBox.Show($"Please confirm booking:\n\nDate: {b.Date.ToString("yyyy/MM/dd")}\nTime: {b.Time}\nTable: {b.Table}\nName: {b.Name}", $"Confirm booking", MessageBoxButton.OKCancel);
             if (MessageBoxResult.OK == mbResult)
@@ -96,36 +118,51 @@ namespace ITHS_lab3
 
 
         // Delete selected bookings in the ListBox
-        public void Unbook(List<string> selectedItems)
+        public void Unbook(int[] selectedIndexes)
         {
-            /* Since the ListBox content is not objects, the bookings are compared
-             as strings. */
-            // For each booking in selected bookings List...
-            foreach (string selectedBooking in selectedItems)
+            Application.Current.Dispatcher.Invoke((Action)delegate
             {
-                int index = 0;
-                // Check if it is the same as a booking in AllBookingsStringList
-                foreach (string booking in AllBookingsStringList)
-                {
-                    if (AllBookingsStringList[index] == selectedBooking)
-                    {
-                        // Remove the booking in the string list, and in the object list
-                        AllBookingsStringList.RemoveAt(index);
-                        AllBookings.RemoveAt(index);
-                        break;
-                    }
-                    index++;
-                }
+                MainWindow window = (MainWindow)Application.Current.MainWindow;
+                window.setInfo($"Unbooking...");                
+            });
+
+            Array.Sort(selectedIndexes);
+            for (int i = selectedIndexes.Length - 1; i >= 0; i--)
+            {
+                //MessageBox.Show("" + selectedIndexes[i]);
+                AllBookings.RemoveAt(selectedIndexes[i]);
+                AllBookingsStringList.RemoveAt(selectedIndexes[i]);
+                //MessageBox.Show("" + AllBookingsStringList.Count);
             }
-            UpdateBookingsStringList();
+
+            Application.Current.Dispatcher.Invoke((Action)delegate
+            {
+                MainWindow window = (MainWindow)Application.Current.MainWindow;
+                window.setInfo($"{selectedIndexes.Length} bookings removed!");
+            });
         }
 
 
         // Update string List of bookings
-        public void UpdateBookingsStringList()
+        private void UpdateBookingsStringList()
         {
+
+            // Set info-textblock
+            Application.Current.Dispatcher.Invoke((Action)delegate
+            {
+                MainWindow window = (MainWindow)Application.Current.MainWindow;
+                window.setInfo("Updating list...");
+            });
+
             // Call booking to string on each booking and put it in a string array
             AllBookingsStringList = AllBookings.Select(booking => booking.BookingToString()).ToList();
+
+            // Empty info-textblock
+            Application.Current.Dispatcher.Invoke((Action)delegate
+            {
+                MainWindow window = (MainWindow)Application.Current.MainWindow;
+                window.setInfo("");
+            });
         }
 
 
@@ -133,13 +170,51 @@ namespace ITHS_lab3
         public void SaveToFile()
         {
             Microsoft.Win32.SaveFileDialog sfd = new Microsoft.Win32.SaveFileDialog();
+
+            sfd.DefaultExt = ".txt";
+            sfd.Filter = "*.txt | *.TXT";
             if (sfd.ShowDialog() == true)
             {
                 string filename = sfd.FileName;
-                sfd.DefaultExt = ".txt";
+
                 // Write to file
-                File.WriteAllLines(filename, AllBookingsStringList);
+                try
+                {
+                    File.WriteAllLines(filename, AllBookingsStringList);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.ToString());
+                }
             }
+        }
+
+
+        public void ReadFromFile()
+        {            
+            Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog();
+            ofd.AddExtension = true;
+            ofd.CheckFileExists = true;
+            ofd.Filter = "*.txt | *.TXT";
+            if (ofd.ShowDialog() == true)
+            {
+                string filename = ofd.FileName;
+                // Open file
+                try
+                {
+                    Application.Current.Dispatcher.Invoke((Action)delegate
+                    {
+                        MainWindow window = (MainWindow)Application.Current.MainWindow;
+                        window.setInfo("Reading from file...");
+                    });                    
+                    bookingsFromFile = File.ReadAllLines(filename).ToList();
+                    
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show(e.ToString());
+                }
+            }            
         }
     }
 }
