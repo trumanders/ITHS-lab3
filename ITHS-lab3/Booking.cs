@@ -7,10 +7,10 @@ namespace ITHS_lab3
 {
     public class Booking
     {
-        public DateTime Date{ get; private set; }
-        public string Time { get; private set; }
-        public string Table { get; private set; }
-        public string Name { get; private set; }
+        public DateTime Date{ get; set; }
+        public string Time { get; set; }
+        public string Table { get; set; }
+        public string Name { get; set; }
 
         public Booking(DateTime date, string time, string table, string name)
         {

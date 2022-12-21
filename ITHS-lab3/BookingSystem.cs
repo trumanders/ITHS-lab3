@@ -1,13 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
 using System.IO;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Threading.Tasks;
 
 namespace ITHS_lab3
 {
@@ -35,6 +30,23 @@ namespace ITHS_lab3
             AllBookingsStringList = new List<string>();
             if (!File.Exists(FILENAME))
                 File.AppendAllText(FILENAME, "");
+
+            SeedDefaultBookings();
+        }
+
+        // Reset number of bookings
+        public void ResetNumberOfBookings()
+        {
+            TotNumBookings = 0;
+        }
+
+        // Create bookings at startup
+        private void SeedDefaultBookings()
+        {            
+            Book(new Booking(DateTime.Now, "17:00", "1", "Paul"), true);
+            Book(new Booking(DateTime.Now, "18:00", "2", "John"), true);
+            Book(new Booking(DateTime.Now, "19:00", "3", "George"), true);
+            Book(new Booking(DateTime.Now, "20:00", "4", "Ringo"), true);
         }
 
 
@@ -74,11 +86,16 @@ namespace ITHS_lab3
 
 
         // Perform booking if it is valid
-        public void Book(Booking tempBooking)
+        public void Book(Booking tempBooking, bool isInitialBookings)
         {
             if (IsValidBooking(tempBooking))
             {
-                if (BookingIsConfirmed(tempBooking))
+                if (!isInitialBookings)     // Skip confirmation dialogue when adding initial bookings at startup
+                {
+                    if (BookingIsConfirmed(tempBooking))
+                        MakeBooking(tempBooking);
+                }
+                else
                     MakeBooking(tempBooking);
             }
             else MessageBox.Show("Already booked! Please try another table, time or day.");
@@ -123,7 +140,7 @@ namespace ITHS_lab3
             Application.Current.Dispatcher.Invoke((Action)delegate
             {
                 MainWindow window = (MainWindow)Application.Current.MainWindow;
-                window.setInfo($"Unbooking...");                
+                window.setInfo($"Unbooking...");
             });
 
             Array.Sort(selectedIndexes);
@@ -191,7 +208,7 @@ namespace ITHS_lab3
 
 
         public void ReadFromFile()
-        {            
+        {
             Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog();
             ofd.AddExtension = true;
             ofd.CheckFileExists = true;
@@ -206,15 +223,15 @@ namespace ITHS_lab3
                     {
                         MainWindow window = (MainWindow)Application.Current.MainWindow;
                         window.setInfo("Reading from file...");
-                    });                    
+                    });
                     bookingsFromFile = File.ReadAllLines(filename).ToList();
-                    
+
                 }
                 catch (Exception e)
                 {
                     MessageBox.Show(e.ToString());
                 }
-            }            
+            }
         }
     }
 }

@@ -14,9 +14,9 @@ namespace ITHS_lab3
     public partial class MainWindow : Window
     {
         BookingSystem bookingSystem;
-        private bool showBookings = true;
+        private bool showBookings;
         private bool workInProgress = false;
-        private bool bookingsExist = false;
+        private bool bookingsExist = true;
         private bool isNumberOfBookingsValid;
 
 
@@ -29,6 +29,8 @@ namespace ITHS_lab3
             tbl_OutputHeader.Text = $"Number of bookings: {bookingSystem.TotNumBookings}";
             btn_GenerateBookings.IsEnabled = false;
             btn_Unbook.IsEnabled = false;
+            showBookings = true;
+            UpdateShowBookingsContent();
             ButtonControl();
         }
 
@@ -62,7 +64,7 @@ namespace ITHS_lab3
             {
                 // Convert DatePicker to DateTime
                 DateTime selectedDateTime = new DateTime((int)dp_SelectDate.SelectedDate.Value.Year, (int)dp_SelectDate.SelectedDate.Value.Month, (int)dp_SelectDate.SelectedDate.Value.Day);
-                bookingSystem.Book(new Booking(selectedDateTime, cbox_SelectTime.Text, cbox_SelectTable.Text, txb_Name.Text));
+                bookingSystem.Book(new Booking(selectedDateTime, cbox_SelectTime.Text, cbox_SelectTable.Text, txb_Name.Text), false);
             }
             UpdateShowBookingsContent();
             if (bookingSystem.AllBookings.Count != 0)
@@ -174,11 +176,12 @@ namespace ITHS_lab3
         // Clears all list content and booking objects
         private void btn_clear_Click(object sender, RoutedEventArgs e)
         {
-            lbx_BookingsOutput.ItemsSource = null;
-            UpdateShowBookingsContent();
+            lbx_BookingsOutput.ItemsSource = null;            
             bookingSystem.AllBookings.Clear();
             bookingSystem.AllBookingsStringList.Clear();
             bookingsExist = false;
+            bookingSystem.ResetNumberOfBookings();
+            UpdateShowBookingsContent();
             ButtonControl();
         }
 
